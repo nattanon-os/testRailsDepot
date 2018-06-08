@@ -32,11 +32,20 @@
    margin-bottom: 2px;
    color: #227;
    }
+   h5 {
+    font-family: sans-serif;
+    margin-left: 100px;
+    margin-top: 0;
+    margin-bottom: 2px; 
+    }
   
    p, div.price_line {
    margin-left: 100px;
    margin-top: 0.5em;
    margin-bottom: 0.8em;
+   form, div {
+     display: inline;
+     }
    }
   
    .price {color: #44a;
