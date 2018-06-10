@@ -31,6 +31,10 @@ class ProductsController < ApplicationController
       if @product.save
         format.html { redirect_to @product, notice: 'Product was successfully created.' }
         format.json { render :show, status: :created, location: @product }
+        
+        @products = Product.all
+        ActionCable.server.broadcast 'products',
+        html: render_to_string('store/index', layout: false)
       else
         format.html { render :new }
         format.json { render json: @product.errors, status: :unprocessable_entity }
