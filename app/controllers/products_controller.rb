@@ -32,10 +32,7 @@ class ProductsController < ApplicationController
         format.html { redirect_to @product, notice: 'Product was successfully created.' }
         format.json { render :show, status: :created, location: @product }
         
-        @products = Product.all
-        ActionCable.server.broadcast 'products',
-        html: render_to_string('store/index', layout: false)
-      else
+       else
         format.html { render :new }
         format.json { render json: @product.errors, status: :unprocessable_entity }
       end
@@ -49,6 +46,10 @@ class ProductsController < ApplicationController
       if @product.update(product_params)
         format.html { redirect_to @product, notice: 'Product was successfully updated.' }
         format.json { render :show, status: :ok, location: @product }
+        @products = Product.all
+        ActionCable.server.broadcast 'products',
+        html: render_to_string('store/index', layout: false)
+
       else
         format.html { render :edit }
         format.json { render json: @product.errors, status: :unprocessable_entity }
@@ -66,6 +67,20 @@ class ProductsController < ApplicationController
     end
   end
 
+  def who_bought
+    @product = Product.find(params[:id])
+    @latest_order = @product.orders.order(:updated_at).last
+    if stale?(@latest_order)
+      respond_to do |format|
+        format.atom
+        format.html
+        format.json { render json: @product.to_json(include: :orders) }
+        format.xml { render xml: @product.to_xml(include: :orders) }
+
+      end
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_product
@@ -77,18 +92,10 @@ class ProductsController < ApplicationController
       redirect_to products_index_url, notice: 'Invalid product #' + params[:id]
     end
 
-    def who_bought
-      @product = Product.find(params[:id])
-      @latest_order = @product.orders.order(:updated_at).last
-      if stale?(@latest_order)
-        respond_to do |format|
-          format.atom
-        end
-      end
-    end
+    
     
     # Never trust parameters from the scary internet, only allow the white list through.
     def product_params
-      params.require(:product).permit(:title, :description, :image_url, :price)
+      params.require(:product).permit(:title, :description, :image_url, :locale, :price)
     end
 end
