@@ -11,24 +11,26 @@
 
   <body class='<%= controller.controller_name %>'>
   <div id="banner">
- <%= image_tag 'logo.svg', alt: 'The Pragmatic Bookshelf' %>
- <span class="title"><%= @page_title %></span>
- </div>
- <div id="columns">
- <div id="side">
- <div id="cart">
-  <%= render @cart %>
- </div>
- <ul>
- <li><a href="http://www....">Home</a></li>
- <li><a href="http://www..../faq">Questions</a></li>
- <li><a href="http://www..../news">News</a></li>
- <li><a href="http://www..../contact">Contact</a></li>
- </ul>
- </div>
- <div id="main">
-    <%= yield %>
+    <%= image_tag 'logo.svg', alt: 'The Pragmatic Bookshelf' %>
+    <span class="title"><%= @page_title %></span>
+  </div>
+  <div id="columns">
+    <div id="side">
+      <% if @cart %>
+        <%= hidden_div_if(@cart.line_items.empty?, id: 'cart') do %>
+            <%= render(@cart) %>
+        <% end %>
+      <% end %>
+      <ul>
+        <li><a href="http://www....">Home</a></li>
+        <li><a href="http://www..../faq">Questions</a></li>
+        <li><a href="http://www..../news">News</a></li>
+        <li><a href="http://www..../contact">Contact</a></li>
+      </ul>
+      </div>
+      <div id="main">
+        <%= yield %>
+      </div>
     </div>
- </div>
   </body>
 </html>
